@@ -20,22 +20,19 @@ const CONFIG = {
     CLASS_NAME_END_TIME: 'ytp-time-end'
 };
 
-let videoPlayer = null;
 let currentTimeSpan = null;
 let durationSpan = null;
 let endTimeSpan = null;
 
-function addEndTime() {
-    videoPlayer = videoPlayer || document.querySelector(CONFIG.SELECTORS.VIDEO_PLAYER);
+function addEndTime(videoPlayerNode) {
+    if (!videoPlayerNode || !videoPlayerNode.classList.contains('playing-mode')) return;
 
-    if (!videoPlayer || !videoPlayer.classList.contains('playing-mode')) return;
-
-    let currentTime = getCurrentTime();
-    let duration = getDuration();
+    let currentTime = getCurrentTime(videoPlayerNode);
+    let duration = getDuration(videoPlayerNode);
 
     if (currentTime === null || duration === null) return;
 
-    let playbackSpeed = videoPlayer.getPlaybackRate();
+    let playbackSpeed = videoPlayerNode.getPlaybackRate();
     let endTimeText = calculateEndTime(currentTime, duration, playbackSpeed);
 
     endTimeSpan = endTimeSpan || document.createElement('span');
@@ -45,8 +42,8 @@ function addEndTime() {
     endTimeSpan.textContent = endTimeText;
 }
 
-function getCurrentTime() {
-    currentTimeSpan = currentTimeSpan || document.querySelector(CONFIG.SELECTORS.CURRENT_TIME);
+function getCurrentTime(videoPlayerNode) {
+    currentTimeSpan = currentTimeSpan || videoPlayerNode.querySelector(CONFIG.SELECTORS.CURRENT_TIME);
 
     if (!currentTimeSpan) return null;
 
@@ -54,8 +51,8 @@ function getCurrentTime() {
     return currentTimeParts.reduce((total, val) => total * 60 + val);
 }
 
-function getDuration() {
-    durationSpan = durationSpan || document.querySelector(CONFIG.SELECTORS.DURATION);
+function getDuration(videoPlayerNode) {
+    durationSpan = durationSpan || videoPlayerNode.querySelector(CONFIG.SELECTORS.DURATION);
 
     if (!durationSpan) return null;
 
@@ -77,9 +74,24 @@ function calculateEndTime(currentTime, duration, playbackSpeed) {
     return ` (Ends at ${endHours.toString().padStart(2, '0')}:${endMinutes.toString().padStart(2, '0')})`;
 }
 
-setInterval(addEndTime, CONFIG.UPDATE_INTERVAL);
+function observePlaybackRateChanges(videoPlayerNode) {
+    const playbackRateObserver = new MutationObserver(addEndTime);
+    playbackRateObserver.observe(videoPlayerNode, {attributes: true, attributeFilter: ['data-playback-rate']});
+}
 
-new MutationObserver(addEndTime).observe(
-    document.querySelector(CONFIG.SELECTORS.VIDEO_PLAYER),
-    {attributes: true, attributeFilter: ['data-playback-rate']}
-);
+const observer = new MutationObserver((mutationsList) => {
+    for (let mutation of mutationsList) {
+        if (mutation.type === 'childList') {
+            let addedNodes = Array.from(mutation.addedNodes);
+            let videoPlayerNode = addedNodes.find(node => node.nodeType === Node.ELEMENT_NODE && node.matches(CONFIG.SELECTORS.VIDEO_PLAYER));
+            if (videoPlayerNode) {
+                setInterval(() => addEndTime(videoPlayerNode), CONFIG.UPDATE_INTERVAL);
+                observer.disconnect();
+                observePlaybackRateChanges(videoPlayerNode);
+                break;
+            }
+        }
+    }
+});
+
+observer.observe(document.body, {childList: true, subtree: true});
