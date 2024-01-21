@@ -26,6 +26,7 @@ const SELECTORS = {
 let endTimeSpan = null;
 
 function addEndTime(videoPlayerNode) {
+    if (!videoPlayerNode.classList.contains('playing-mode')) return;
     let bigVideoPlayerContainer = document.querySelector(SELECTORS.BIG_VIDEO_PLAYER_CONTAINER);
     if (!bigVideoPlayerContainer.contains(videoPlayerNode) && !CONFIG.ADD_TO_MINI_PLAYER) return;
 
