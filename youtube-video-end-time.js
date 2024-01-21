@@ -11,8 +11,8 @@
 
 const CONFIG = {
     USE_24_HOUR_TIME: false,
-    UPDATE_INTERVAL: 1000, // in milliseconds
     ADD_TO_MINI_PLAYER: false,
+    UPDATE_INTERVAL: 1000, // in milliseconds
 };
 
 const SELECTORS = {
@@ -28,8 +28,6 @@ let observedNodes = new Set();
 
 function addEndTime(videoPlayerNode) {
     if (!videoPlayerNode.classList.contains('playing-mode')) return;
-    let bigVideoPlayerContainer = document.querySelector(SELECTORS.BIG_VIDEO_PLAYER_CONTAINER);
-    if (!bigVideoPlayerContainer.contains(videoPlayerNode) && !CONFIG.ADD_TO_MINI_PLAYER) return;
 
     let currentTime = getCurrentTime(videoPlayerNode);
     let duration = getDuration(videoPlayerNode);
@@ -78,6 +76,8 @@ const observer = new MutationObserver((mutationsList) => {
             let addedNodes = Array.from(mutation.addedNodes);
             let videoPlayerNodes = addedNodes.filter(node => node.nodeType === Node.ELEMENT_NODE && node.matches(SELECTORS.VIDEO_PLAYER));
             videoPlayerNodes.forEach(videoPlayerNode => {
+                let bigVideoPlayerContainer = document.querySelector(SELECTORS.BIG_VIDEO_PLAYER_CONTAINER);
+                if (!bigVideoPlayerContainer.contains(videoPlayerNode) && !CONFIG.ADD_TO_MINI_PLAYER) return;
                 if (!observedNodes.has(videoPlayerNode)) {
                     observedNodes.add(videoPlayerNode);
                     setInterval(() => addEndTime(videoPlayerNode), CONFIG.UPDATE_INTERVAL);
