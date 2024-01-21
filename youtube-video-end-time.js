@@ -12,9 +12,11 @@
 const CONFIG = {
     USE_24_HOUR_TIME: false,
     UPDATE_INTERVAL: 1000, // in milliseconds
+    ADD_TO_MINI_PLAYER: false,
 };
 
 const SELECTORS = {
+    BIG_VIDEO_PLAYER_CONTAINER: '#full-bleed-container',
     VIDEO_PLAYER: '.html5-video-player',
     CURRENT_TIME: '.ytp-time-current',
     DURATION: '.ytp-time-duration',
@@ -24,7 +26,8 @@ const SELECTORS = {
 let endTimeSpan = null;
 
 function addEndTime(videoPlayerNode) {
-    if (!videoPlayerNode.classList.contains('playing-mode')) return;
+    let bigVideoPlayerContainer = document.querySelector(SELECTORS.BIG_VIDEO_PLAYER_CONTAINER);
+    if (!bigVideoPlayerContainer.contains(videoPlayerNode) && !CONFIG.ADD_TO_MINI_PLAYER) return;
 
     let currentTime = getCurrentTime(videoPlayerNode);
     let duration = getDuration(videoPlayerNode);
