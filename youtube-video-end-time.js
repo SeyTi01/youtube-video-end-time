@@ -12,11 +12,12 @@
 const CONFIG = {
     USE_24_HOUR_TIME: false,
     UPDATE_INTERVAL: 1000, // in milliseconds
-    SELECTORS: {
-        VIDEO_PLAYER: '.html5-video-player',
-        CURRENT_TIME: '.ytp-time-current',
-        DURATION: '.ytp-time-duration'
-    },
+};
+
+const SELECTORS = {
+    VIDEO_PLAYER: '.html5-video-player',
+    CURRENT_TIME: '.ytp-time-current',
+    DURATION: '.ytp-time-duration',
     CLASS_NAME_END_TIME: 'ytp-time-end'
 };
 
@@ -31,19 +32,19 @@ function addEndTime(videoPlayerNode) {
     let endTimeText = calculateEndTime(currentTime, duration, playbackSpeed);
 
     endTimeSpan = endTimeSpan || document.createElement('span');
-    endTimeSpan.className = CONFIG.CLASS_NAME_END_TIME;
-    videoPlayerNode.querySelector(CONFIG.SELECTORS.DURATION).parentElement.appendChild(endTimeSpan);
+    endTimeSpan.className = SELECTORS.CLASS_NAME_END_TIME;
+    videoPlayerNode.querySelector(SELECTORS.DURATION).parentElement.appendChild(endTimeSpan);
 
     endTimeSpan.textContent = endTimeText;
 }
 
 function getCurrentTime(videoPlayerNode) {
-    let currentTimeSpan = videoPlayerNode.querySelector(CONFIG.SELECTORS.CURRENT_TIME);
+    let currentTimeSpan = videoPlayerNode.querySelector(SELECTORS.CURRENT_TIME);
     return currentTimeSpan ? getTimeInSeconds(currentTimeSpan.textContent) : null;
 }
 
 function getDuration(videoPlayerNode) {
-    let durationSpan = videoPlayerNode.querySelector(CONFIG.SELECTORS.DURATION);
+    let durationSpan = videoPlayerNode.querySelector(SELECTORS.DURATION);
     return durationSpan ? getTimeInSeconds(durationSpan.textContent) : null;
 }
 
@@ -70,7 +71,7 @@ const observer = new MutationObserver((mutationsList) => {
     for (let mutation of mutationsList) {
         if (mutation.type === 'childList') {
             let addedNodes = Array.from(mutation.addedNodes);
-            let videoPlayerNode = addedNodes.find(node => node.nodeType === Node.ELEMENT_NODE && node.matches(CONFIG.SELECTORS.VIDEO_PLAYER));
+            let videoPlayerNode = addedNodes.find(node => node.nodeType === Node.ELEMENT_NODE && node.matches(SELECTORS.VIDEO_PLAYER));
             if (videoPlayerNode) {
                 setInterval(() => addEndTime(videoPlayerNode), CONFIG.UPDATE_INTERVAL);
             }
