@@ -58,17 +58,12 @@ function calculateEndTime(currentTime, duration, playbackSpeed) {
         endHours -= 12;
     }
 
-    return ` (Ends at ${endHours.toString().padStart(2, '0')}:${endMinutes.toString().padStart(2, '0')})`;
+    return ` (Ends ${endHours.toString().padStart(2, '0')}:${endMinutes.toString().padStart(2, '0')})`;
 }
 
 function getTimeInSeconds(timeString) {
     let timeParts = timeString.split(':').map(Number);
     return timeParts.reduce((total, val) => total * 60 + val);
-}
-
-function observePlaybackRateChanges(videoPlayerNode) {
-    const playbackRateObserver = new MutationObserver(addEndTime);
-    playbackRateObserver.observe(videoPlayerNode, {attributes: true, attributeFilter: ['data-playback-rate']});
 }
 
 const observer = new MutationObserver((mutationsList) => {
@@ -78,11 +73,9 @@ const observer = new MutationObserver((mutationsList) => {
             let videoPlayerNode = addedNodes.find(node => node.nodeType === Node.ELEMENT_NODE && node.matches(CONFIG.SELECTORS.VIDEO_PLAYER));
             if (videoPlayerNode) {
                 setInterval(() => addEndTime(videoPlayerNode), CONFIG.UPDATE_INTERVAL);
-                observePlaybackRateChanges(videoPlayerNode);
-                break;
             }
         }
     }
 });
 
-observer.observe(document.body, {childList: true, subtree: true});
+observer.observe(document.body, { childList: true, subtree: true });
