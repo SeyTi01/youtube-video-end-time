@@ -71,10 +71,10 @@ const observer = new MutationObserver((mutationsList) => {
     for (let mutation of mutationsList) {
         if (mutation.type === 'childList') {
             let addedNodes = Array.from(mutation.addedNodes);
-            let videoPlayerNode = addedNodes.find(node => node.nodeType === Node.ELEMENT_NODE && node.matches(SELECTORS.VIDEO_PLAYER));
-            if (videoPlayerNode) {
+            let videoPlayerNodes = addedNodes.filter(node => node.nodeType === Node.ELEMENT_NODE && node.matches(SELECTORS.VIDEO_PLAYER));
+            videoPlayerNodes.forEach(videoPlayerNode => {
                 setInterval(() => addEndTime(videoPlayerNode), CONFIG.UPDATE_INTERVAL);
-            }
+            });
         }
     }
 });
