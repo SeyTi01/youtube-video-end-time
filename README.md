@@ -2,10 +2,9 @@
 
 This is a userscript that dynamically displays the end time of a YouTube video based on the current playback speed and the remaining time of the video.
 
-## Features
+## Features (1.1)
 
-- Dynamically calculates and displays the end time of the video.
-- The end time is updated in real-time, considering the current playback speed.
+- Dynamically calculates and displays the end time of the video based on playback speed and remaining time.
 - The script uses either a 24-hour or 12-hour format, based on the configuration.
 
 ## How to Use
@@ -19,6 +18,7 @@ This is a userscript that dynamically displays the end time of a YouTube video b
 You can configure the script by modifying the `CONFIG` object in the script:
 
 - `USE_24_HOUR_TIME`: Set to `true` to use a 24-hour time format. Set to `false` to use a 12-hour time format.
+- `ADD_TO_MINI_PLAYER`: Set to `true` to display the end time on mini players.
 - `UPDATE_INTERVAL`: The interval (in milliseconds) at which the end time is updated.
 
 ## License

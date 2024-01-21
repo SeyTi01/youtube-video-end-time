@@ -3,7 +3,7 @@
 // @namespace   https://github.com/SeyTi01/
 // @match       https://www.youtube.com/*
 // @grant       none
-// @version     1.0
+// @version     1.1
 // @description Dynamically displays end time based on playback speed and time remaining.
 // @author      SeyTi01
 // @license     MIT
