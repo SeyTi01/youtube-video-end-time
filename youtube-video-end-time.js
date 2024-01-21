@@ -24,6 +24,7 @@ const SELECTORS = {
 };
 
 let endTimeSpan = null;
+let observedNodes = new Set();
 
 function addEndTime(videoPlayerNode) {
     if (!videoPlayerNode.classList.contains('playing-mode')) return;
@@ -77,7 +78,10 @@ const observer = new MutationObserver((mutationsList) => {
             let addedNodes = Array.from(mutation.addedNodes);
             let videoPlayerNodes = addedNodes.filter(node => node.nodeType === Node.ELEMENT_NODE && node.matches(SELECTORS.VIDEO_PLAYER));
             videoPlayerNodes.forEach(videoPlayerNode => {
-                setInterval(() => addEndTime(videoPlayerNode), CONFIG.UPDATE_INTERVAL);
+                if (!observedNodes.has(videoPlayerNode)) {
+                    observedNodes.add(videoPlayerNode);
+                    setInterval(() => addEndTime(videoPlayerNode), CONFIG.UPDATE_INTERVAL);
+                }
             });
         }
     }
